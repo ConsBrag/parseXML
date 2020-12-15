@@ -78,11 +78,12 @@ public class XPathXML {
 
     // Errors
     private static void printErrorCor(Document document) throws DOMException, XPathExpressionException {
+
         System.out.println("Example 1 - Печать всех элементов HTTPSamplerProxy");
         XPathFactory pathFactory = XPathFactory.newInstance();
         XPath xpath = pathFactory.newXPath();
-        String checkValue = "", checkURL;
-        int ERROR = 0;
+        String checkValue = "", checkURL, checkMethod;
+        int VALUE_ERROR = 0, URL_ERROR = 0;
 
         // Пример записи XPath
         // Подный путь до элемента
@@ -90,47 +91,57 @@ public class XPathXML {
         // Все элементы с таким именем
         //XPathExpression expr = xpath.compile("//stringProp");
         // Элементы, вложенные в другой элемент
-        XPathExpression exprName = xpath.compile("//jmeterTestPlan/hashTree/hashTree/hashTree/hashTree/hashTree/HTTPSamplerProxy/attribute::testname");
+        XPathExpression exprName = xpath.compile("//HTTPSamplerProxy/attribute::testname");
         //[@name='Argument.value']
-        XPathExpression expr = xpath.compile("//jmeterTestPlan/hashTree/hashTree/hashTree/hashTree/hashTree/HTTPSamplerProxy/elementProp/collectionProp/elementProp//stringProp");
-        XPathExpression exprMethod = xpath.compile("//jmeterTestPlan/hashTree/hashTree/hashTree/hashTree/hashTree/HTTPSamplerProxy//stringProp[@name='HTTPSampler.method']");
-        XPathExpression exprURL = xpath.compile("//jmeterTestPlan/hashTree/hashTree/hashTree/hashTree/hashTree/HTTPSamplerProxy//stringProp[@name='HTTPSampler.path']");
+        XPathExpression expr = xpath.compile("//HTTPSamplerProxy/elementProp/collectionProp/elementProp//stringProp[@name='Argument.value']");
+        XPathExpression exprMethod = xpath.compile("//HTTPSamplerProxy//stringProp[@name='HTTPSampler.method']");
+        XPathExpression exprURL = xpath.compile("//HTTPSamplerProxy//stringProp[@name='HTTPSampler.path']");
 
         NodeList nodesName = (NodeList) exprName.evaluate(document, XPathConstants.NODESET);
         NodeList nodesValue = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
         NodeList nodesMethod = (NodeList) exprMethod.evaluate(document, XPathConstants.NODESET);
         NodeList nodesURL = (NodeList) exprURL.evaluate(document, XPathConstants.NODESET);
-
+        int k = 0;
         for (int i = 0; i < nodesName.getLength(); i++) {
+
             Node name = nodesName.item(i);
-            Node n = nodesValue.item(i);
             Node method = nodesMethod.item(i);
             Node url = nodesURL.item(i);
 
             checkURL = url.getTextContent();
+            checkMethod = method.getTextContent();
             Pattern patternURL = Pattern.compile("[^\\D]\\d+");
             Matcher matcherURL = patternURL.matcher(checkURL);
             while (matcherURL.find()) {
                 System.out.println("URL_ERROR:");
                 System.out.println(checkURL.substring(matcherURL.start(), matcherURL.end()));
-                ERROR++;
+                URL_ERROR++;
             }
+            if("POST".equals(checkMethod)){
+                for (int j = k; j < nodesValue.getLength(); k++){
+                    Node value = nodesValue.item(j);
+                    if(value.getTextContent() != null) checkValue = value.getTextContent();
+                    Pattern patternValue = Pattern.compile("[^a-zA-Z|^-](\\d{4}\\d+)[^a-zA-Z|-]"); //[^-|a-zA-Z]\d{3}\d+[^\|[a-zA-Z]]
+                    Matcher matcherValue = patternValue.matcher(checkValue);
+                    while (matcherValue.find()) {
+                        System.out.println("VALUE_ERROR: ");
+                        System.out.println(checkValue.substring(matcherValue.start(1), matcherValue.end(1)));
+                        VALUE_ERROR++;
+                    }
+                    if (){System.out.println("Value: " + checkValue);}
 
-            if(n.getTextContent() != null) checkValue = n.getTextContent();
-            Pattern patternValue = Pattern.compile("[^a-zA-Z|^-](\\d{3}\\d+)[^a-zA-Z|-]"); //[^-|a-zA-Z]\d{3}\d+[^\|[a-zA-Z]]
-            Matcher matcherValue = patternValue.matcher(checkValue);
-            while (matcherValue.find()) {
-                System.out.println("VALUE_ERROR:");
-                System.out.println(checkValue.substring(matcherValue.start(1), matcherValue.end(1)));
-                ERROR++;
+                    k++;
+                    break;
+                }
             }
-
-            System.out.println("Name:" + name.getTextContent());
-            System.out.println("Value:" + checkValue);
-            System.out.println("Method:" + method.getTextContent());
-            System.out.println("URL:" + checkURL + "\n");
+            if (!"POST".equals(checkMethod)){
+                System.out.println("Name:" + name.getTextContent());
+                System.out.println("Method: " + checkMethod);
+                System.out.println("URL: " + checkURL + "\n");
+            }
         }
-            System.out.println("ERROR:" + ERROR);
+            System.out.println("VALUE_ERROR: " + VALUE_ERROR);
+            System.out.println("URL_ERROR: " + URL_ERROR);
     }
 
 //    // Печать элементов Book у которых значение Cost > 4
