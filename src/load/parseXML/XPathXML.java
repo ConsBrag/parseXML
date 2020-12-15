@@ -128,17 +128,14 @@ public class XPathXML {
                         System.out.println(checkValue.substring(matcherValue.start(1), matcherValue.end(1)));
                         VALUE_ERROR++;
                     }
-                    if (){System.out.println("Value: " + checkValue);}
-
+                    System.out.println("Value: " + checkValue);
                     k++;
                     break;
                 }
             }
-            if (!"POST".equals(checkMethod)){
-                System.out.println("Name:" + name.getTextContent());
-                System.out.println("Method: " + checkMethod);
-                System.out.println("URL: " + checkURL + "\n");
-            }
+            System.out.println("Name:" + name.getTextContent());
+            System.out.println("Method: " + checkMethod);
+            System.out.println("URL: " + checkURL + "\n");
         }
             System.out.println("VALUE_ERROR: " + VALUE_ERROR);
             System.out.println("URL_ERROR: " + URL_ERROR);
