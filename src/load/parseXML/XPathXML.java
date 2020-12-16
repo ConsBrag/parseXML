@@ -66,6 +66,7 @@ public class XPathXML {
         XPathFactory pathFactory = XPathFactory.newInstance();
         XPath xpath = pathFactory.newXPath();
         String checkValue = "", checkURL, checkMethod;
+        boolean input0, input1;
         int VALUE_ERROR = 0, URL_ERROR = 0, k = 0;
 
         // Пример записи XPath
@@ -86,6 +87,8 @@ public class XPathXML {
 
         for (int i = 0; i < nodesName.getLength(); i++) {
 
+            input0 = false;
+            input1 = false;
             Node name = nodesName.item(i);
             Node method = nodesMethod.item(i);
             Node url = nodesURL.item(i);
@@ -98,6 +101,7 @@ public class XPathXML {
                 System.out.println("URL_ERROR:");
                 System.out.println(checkURL.substring(matcherURL.start(), matcherURL.end()));
                 URL_ERROR++;
+                input0 = true;
             }
             if("POST".equals(checkMethod)){
                 for (int j = k; j < nodesValue.getLength();){
@@ -109,20 +113,21 @@ public class XPathXML {
                         System.out.println("VALUE_ERROR: ");
                         System.out.println(checkValue.substring(matcherValue.start(1), matcherValue.end(1)));
                         VALUE_ERROR++;
+                        input1 = true;
                     }
-                    System.out.println("Value: " + checkValue);
+                    if(input1) {System.out.println("Value: " + checkValue);}
                     k++;
                     break;
                 }
             }
-            System.out.println("Name:" + name.getTextContent());
-            System.out.println("Method: " + checkMethod);
-            System.out.println("URL: " + checkURL + "\n");
-
+            if(input0 || input1){
+                System.out.println("Name:" + name.getTextContent());
+                System.out.println("Method: " + checkMethod);
+                System.out.println("URL: " + checkURL + "\n");
+            }
         }
             System.out.println("VALUE_ERROR: " + VALUE_ERROR);
             System.out.println("URL_ERROR: " + URL_ERROR);
-
     }
 }
 
