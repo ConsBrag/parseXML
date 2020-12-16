@@ -27,7 +27,8 @@ public class XPathXML {
             path = path.replace("\\","\\\\");
 
             //C:\Users\admin\IdeaProjects\parseXML\src\xml\example\record\testXML.xml
-            Document document = documentBuilder.parse(path);
+            System.out.println(path);
+            Document document = documentBuilder.parse(new File(path));
             System.out.println("Save to text file? - print \"yes\"");
             path = in.nextLine();
 
@@ -123,7 +124,7 @@ public class XPathXML {
                 }
             }
             if(input0 || input1){
-                System.out.println("Name:" + name.getTextContent());
+                System.out.println("Name: " + name.getTextContent());
                 System.out.println("Method: " + checkMethod);
                 System.out.println("URL: " + checkURL + "\n");
             }
