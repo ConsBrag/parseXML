@@ -22,13 +22,15 @@ public class XPathXML {
         try {
             DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Scanner in = new Scanner(System.in);
-            System.out.println("Введите путь к file.xml");
+            System.out.println("Введите путь к file.xml или file.jmx");
             String path = in.nextLine();
             path = path.replace("\\","\\\\");
+
             //C:\Users\admin\IdeaProjects\parseXML\src\xml\example\record\testXML.xml
             Document document = documentBuilder.parse(path);
-            System.out.println("Сохранить в текстовый файл? - \"print yes\"");
+            System.out.println("Сохранить в текстовый файл? - print \"yes\"");
             path = in.nextLine();
+
             if("yes".equals(path)){
                 // Создаём поток для сохранения выводимых данных
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -95,7 +97,7 @@ public class XPathXML {
 
             checkURL = url.getTextContent();
             checkMethod = method.getTextContent();
-            Pattern patternURL = Pattern.compile("[^\\D]\\d+");
+            Pattern patternURL = Pattern.compile("[/](\\d{3}\\d+)[/]");// [\\](\d{3}\d+)[\\]
             Matcher matcherURL = patternURL.matcher(checkURL);
             while (matcherURL.find()) {
                 System.out.println("URL_ERROR:");
@@ -107,7 +109,7 @@ public class XPathXML {
                 for (int j = k; j < nodesValue.getLength();){
                     Node value = nodesValue.item(j);
                     if(value.getTextContent() != null) checkValue = value.getTextContent();
-                    Pattern patternValue = Pattern.compile("[^a-zA-Z|^-](\\d{4}\\d+)[^a-zA-Z|-]"); //[^-|a-zA-Z]\d{3}\d+[^\|[a-zA-Z]]
+                    Pattern patternValue = Pattern.compile("[{|:|\"](\\d{3}\\d+)[:|\"|}]"); //[^a-zA-Z|^-](\d{4}\d+)[^a-zA-Z|-]
                     Matcher matcherValue = patternValue.matcher(checkValue);
                     while (matcherValue.find()) {
                         System.out.println("VALUE_ERROR: ");
