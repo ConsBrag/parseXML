@@ -27,7 +27,6 @@ public class XPathXML {
             path = path.replace("\\","\\\\");
 
             //C:\Users\admin\IdeaProjects\parseXML\src\xml\example\record\testXML.xml
-            System.out.println(path);
             Document document = documentBuilder.parse(new File(path));
             System.out.println("Save to text file? - print \"yes\"");
             path = in.nextLine();
@@ -44,7 +43,7 @@ public class XPathXML {
                 System.setOut(ps);
 
                 // Вызываем функцию, вывод которой нужно перехватить
-                printErrorCor(document);
+                printError(document);
 
                 // Восстанавливаем оригинальный поток вывода
                 System.out.flush();
@@ -55,7 +54,7 @@ public class XPathXML {
                     baos.writeTo(fos);
                 }
             }
-            else printErrorCor(document);
+            else printError(document);
 
         } catch (XPathExpressionException | ParserConfigurationException | SAXException | IOException ex) {
             ex.printStackTrace(System.out);
@@ -63,74 +62,83 @@ public class XPathXML {
     }
 
     // Errors
-    private static void printErrorCor(Document document) throws DOMException, XPathExpressionException {
+    private static void printError(Document document) throws DOMException, XPathExpressionException {
 
         System.out.println("Outputting all HTTPSamplerProxy elements to the console");
         XPathFactory pathFactory = XPathFactory.newInstance();
         XPath xpath = pathFactory.newXPath();
-        String checkValue = "", checkURL, checkMethod;
-        boolean input0, input1;
+        String checkValueFull = "", checkURL, checkMethod, checkValue, checkName;
+        String checkValueFind = null;
+        boolean input0 = false, input1 = false;
         int VALUE_ERROR = 0, URL_ERROR = 0, k = 0;
 
-        // Пример записи XPath
-        // Подный путь до элемента
-        //XPathExpression expr = xpath.compile("testXML/jmeterTestPlan/TestPlan/stringProp");
-        // Все элементы с таким именем
-        //XPathExpression expr = xpath.compile("//stringProp");
-        // Элементы, вложенные в другой элемент
+        XPathExpression expr = xpath.compile("//HTTPSamplerProxy");
         XPathExpression exprName = xpath.compile("//HTTPSamplerProxy/attribute::testname");
-        XPathExpression expr = xpath.compile("//HTTPSamplerProxy/elementProp/collectionProp/elementProp//stringProp[@name='Argument.value']");
         XPathExpression exprMethod = xpath.compile("//HTTPSamplerProxy//stringProp[@name='HTTPSampler.method']");
         XPathExpression exprURL = xpath.compile("//HTTPSamplerProxy//stringProp[@name='HTTPSampler.path']");
 
-        NodeList nodesName = (NodeList) exprName.evaluate(document, XPathConstants.NODESET);
         NodeList nodesValue = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
+        NodeList nodesName = (NodeList) exprName.evaluate(document, XPathConstants.NODESET);
         NodeList nodesMethod = (NodeList) exprMethod.evaluate(document, XPathConstants.NODESET);
         NodeList nodesURL = (NodeList) exprURL.evaluate(document, XPathConstants.NODESET);
 
-        for (int i = 0; i < nodesName.getLength(); i++) {
-
-            input0 = false;
-            input1 = false;
+        for (int i = 0; i < nodesValue.getLength(); i++) {
+            Node value = nodesValue.item(i);
             Node name = nodesName.item(i);
             Node method = nodesMethod.item(i);
             Node url = nodesURL.item(i);
 
-            checkURL = url.getTextContent();
+            checkName = name.getTextContent();
             checkMethod = method.getTextContent();
+            checkURL = url.getTextContent();
+
+            checkValueFull = value.getTextContent();
+            //System.out.println("Value: " + checkValueFull);
+
             Pattern patternURL = Pattern.compile("[/](\\d{3}\\d+)[/]");// [\\](\d{3}\d+)[\\]
             Matcher matcherURL = patternURL.matcher(checkURL);
+
             while (matcherURL.find()) {
                 System.out.println("URL_ERROR:");
                 System.out.println(checkURL.substring(matcherURL.start(1), matcherURL.end(1)));
                 URL_ERROR++;
                 input0 = true;
             }
-            if("POST".equals(checkMethod)){
-                for (int j = k; j < nodesValue.getLength();){
-                    Node value = nodesValue.item(j);
-                    if(value.getTextContent() != null) checkValue = value.getTextContent();
-                    Pattern patternValue = Pattern.compile("[{|:|\"](\\d{3}\\d+)[:|\"|}]"); //[^a-zA-Z|^-](\d{4}\d+)[^a-zA-Z|-]
-                    Matcher matcherValue = patternValue.matcher(checkValue);
-                    while (matcherValue.find()) {
-                        System.out.println("VALUE_ERROR: ");
-                        System.out.println(checkValue.substring(matcherValue.start(1), matcherValue.end(1)));
-                        VALUE_ERROR++;
-                        input1 = true;
-                    }
-                    if(input1) {System.out.println("Value: " + checkValue);}
-                    k++;
-                    break;
-                }
+
+            if(value.getTextContent() != null) checkValueFull = value.getTextContent();
+            Pattern patternValueFind = Pattern.compile("[^$][{](.+)[}]");
+            Matcher matcherValueFind = patternValueFind.matcher(checkValueFull);
+
+            while (matcherValueFind.find()) {
+                checkValueFind = checkValueFull.substring(matcherValueFind.start(1), matcherValueFind.end(1));
             }
+
+            if("POST".equals(checkMethod)){
+                Pattern patternValue = Pattern.compile("[{|:|\"](\\d{3}\\d+)[:|\"|}|,]"); //[^a-zA-Z|^-](\d{4}\d+)[^a-zA-Z|-]
+                assert checkValueFind != null;
+                Matcher matcherValue = patternValue.matcher(checkValueFind);
+
+                while (matcherValue.find()) {
+                    System.out.println("VALUE_ERROR: ");
+                    System.out.println(checkValueFind.substring(matcherValue.start(1), matcherValue.end(1)));
+                    VALUE_ERROR++;
+                    input1 = true;
+                }
+                if(input1) {System.out.println("Value: " + checkValueFind);}
+            }
+
             if(input0 || input1){
-                System.out.println("Name: " + name.getTextContent());
+                System.out.println("Name: " + checkName);
                 System.out.println("Method: " + checkMethod);
                 System.out.println("URL: " + checkURL + "\n");
             }
+            checkValueFind = "";
+            checkName = "";
+            checkMethod = "";
+            checkURL = "";
         }
-            System.out.println("VALUE_ERROR: " + VALUE_ERROR);
-            System.out.println("URL_ERROR: " + URL_ERROR);
+        System.out.println("VALUE_ERROR: " + VALUE_ERROR);
+        System.out.println("URL_ERROR: " + URL_ERROR);
     }
 }
 
