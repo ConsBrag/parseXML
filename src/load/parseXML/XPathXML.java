@@ -22,13 +22,13 @@ public class XPathXML {
         try {
             DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Scanner in = new Scanner(System.in);
-            System.out.println("Введите путь к file.xml или file.jmx");
+            System.out.println("Enter the path to file.xml or file.jmx");
             String path = in.nextLine();
             path = path.replace("\\","\\\\");
 
             //C:\Users\admin\IdeaProjects\parseXML\src\xml\example\record\testXML.xml
             Document document = documentBuilder.parse(path);
-            System.out.println("Сохранить в текстовый файл? - print \"yes\"");
+            System.out.println("Save to text file? - print \"yes\"");
             path = in.nextLine();
 
             if("yes".equals(path)){
@@ -64,7 +64,7 @@ public class XPathXML {
     // Errors
     private static void printErrorCor(Document document) throws DOMException, XPathExpressionException {
 
-        System.out.println("Вывод всех элементов HTTPSamplerProxy в терминал");
+        System.out.println("Outputting all HTTPSamplerProxy elements to the console");
         XPathFactory pathFactory = XPathFactory.newInstance();
         XPath xpath = pathFactory.newXPath();
         String checkValue = "", checkURL, checkMethod;
