@@ -106,11 +106,11 @@ public class XPathXML {
             }
 
             if(value.getTextContent() != null) checkValueFull = value.getTextContent();
-            Pattern patternValueFind = Pattern.compile("[^$][{](.+)[}]");
+            Pattern patternValueFind = Pattern.compile("([^$])[{](.+)([}])\\n");
             Matcher matcherValueFind = patternValueFind.matcher(checkValueFull);
 
             while (matcherValueFind.find()) {
-                checkValueFind = checkValueFull.substring(matcherValueFind.start(1), matcherValueFind.end(1));
+                checkValueFind = checkValueFull.substring(matcherValueFind.start(), matcherValueFind.end());
             }
 
             if("POST".equals(checkMethod)){
