@@ -101,7 +101,7 @@ public class XPathXML {
             Matcher matcherURL = patternURL.matcher(checkURL);
             while (matcherURL.find()) {
                 System.out.println("URL_ERROR:");
-                System.out.println(checkURL.substring(matcherURL.start(), matcherURL.end()));
+                System.out.println(checkURL.substring(matcherURL.start(1), matcherURL.end(1)));
                 URL_ERROR++;
                 input0 = true;
             }
