@@ -83,6 +83,9 @@ public class XPathXML {
         NodeList nodesURL = (NodeList) exprURL.evaluate(document, XPathConstants.NODESET);
 
         for (int i = 0; i < nodesValue.getLength(); i++) {
+            input0 = false;
+            input1 = false;
+
             Node value = nodesValue.item(i);
             Node name = nodesName.item(i);
             Node method = nodesMethod.item(i);
@@ -124,7 +127,11 @@ public class XPathXML {
                     VALUE_ERROR++;
                     input1 = true;
                 }
-                if(input1) {System.out.println("Value: " + checkValueFind);}
+                if(input1) {
+                    if (checkValueFind != null && checkValueFind.length() > 0) {
+                        checkValueFind = checkValueFind.substring(0, checkValueFind.length() - 1);
+                    }
+                    System.out.println("Value: " + checkValueFind);}
             }
 
             if(input0 || input1){
