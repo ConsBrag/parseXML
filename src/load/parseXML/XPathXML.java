@@ -117,7 +117,7 @@ public class XPathXML {
             }
 
             if("POST".equals(checkMethod)){
-                Pattern patternValue = Pattern.compile("[{|:|\"](\\d{3}\\d+)[:|\"|}|,]"); //[^a-zA-Z|^-](\d{4}\d+)[^a-zA-Z|-]
+                Pattern patternValue = Pattern.compile("[\\[{:\"](\\d{3}\\d+)[:\"},\\\\\\]]"); //[^a-zA-Z|^-](\d{4}\d+)[^a-zA-Z|-]
                 assert checkValueFind != null;
                 Matcher matcherValue = patternValue.matcher(checkValueFind);
 
