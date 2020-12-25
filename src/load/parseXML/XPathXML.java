@@ -29,14 +29,14 @@ public class XPathXML {
             Document document = documentBuilder.parse(new File(path)); //Документ
             String search = null; // Строка поиска
             int seqNumber = 0;
-            System.out.println("Input number case: \n  case 1 - Errors\n  case 2 - Copy Body\n  case 3 - Print All");
+            System.out.println("Input number case: \n  case 1 - Errors\n  case 2 - Copy Body\n  case default - Print All");
             seqNumber = in.nextInt();;
             switch (seqNumber) {
                 //Errors
                 case (1):
                 {
                     System.out.println("Save to text file? - print \"yes\"");
-                    path = in.nextLine();
+                    path = in.next();
 
                     if("yes".equals(path)){
                         // Создаём поток для сохранения выводимых данных
@@ -105,7 +105,7 @@ public class XPathXML {
                 default:
                 {
                     System.out.println("Save to text file? - print \"yes\"");
-                    path = in.nextLine();
+                    path = in.next();
 
                     if("yes".equals(path)){
                         // Создаём поток для сохранения выводимых данных
@@ -210,7 +210,8 @@ public class XPathXML {
                     if (checkValueFind != null && checkValueFind.length() > 0) {
                         checkValueFind = checkValueFind.substring(0, checkValueFind.length() - 1);
                     }
-                    System.out.println("Value: " + checkValueFind);}
+                    System.out.println("Value: " + checkValueFind);
+                }
             }
 
             if(input0 || input1){
@@ -272,7 +273,9 @@ public class XPathXML {
 
             if(search.equals(checkName)){
                 System.out.println("Name: " + checkName);
-                System.out.println("Value: " + checkValueFind);
+                if(!"".equals(checkValueFind)){
+                    System.out.println("Value: " + checkValueFind);
+                }
                 System.out.println("Method: " + checkMethod);
                 System.out.println("URL: " + checkURL + "\n");
             }
@@ -314,7 +317,7 @@ public class XPathXML {
             checkName = name.getTextContent();
             checkMethod = method.getTextContent();
             checkURL = url.getTextContent();
-            checkValueFull = value.getTextContent();
+            //checkValueFull = value.getTextContent();
 
             if(value.getTextContent() != null) checkValueFull = value.getTextContent();
             Pattern patternValueFind = Pattern.compile("([^$])[{](.+)([}])\\n");
@@ -329,7 +332,9 @@ public class XPathXML {
             }
 
             System.out.println("Name: " + checkName);
-            System.out.println("Value: " + checkValueFind);
+            if(!"".equals(checkValueFind)){
+                System.out.println("Value: " + checkValueFind);
+            }
             System.out.println("Method: " + checkMethod);
             System.out.println("URL: " + checkURL + "\n");
 
